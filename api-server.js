@@ -40,9 +40,9 @@ app.get('/api', function(request, response) {
 });
 
 app.get('/api/boards', function(request, response) {
-    return BoardModel.find(function(error, data) {
+    return BoardModel.find(function(error, boards) {
         if (!error) {
-            return response.send(data);
+            return response.send(boards);
         } else {
             return console.log(error);
         }
@@ -64,6 +64,21 @@ app.post('/api/boards', function(request, response) {
         }
     });
     return response.send(board);
+});
+
+app.all('/api/boards/:id', function(request, response, next) {
+    response.header("Access-Control-Allow-Origin", "*");
+    next();
+});
+
+app.get('/api/boards/:id', function(request, response, next) {
+    return BoardModel.findById(request.params.id, function(error, board) {
+        if (!error) {
+            return response.send(board);
+        } else {
+            return console.log(error);
+        }
+    });
 });
 
 app.put('/api/boards/:id', function(request, reponse) {
