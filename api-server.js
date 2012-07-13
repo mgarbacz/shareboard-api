@@ -20,6 +20,7 @@ mongoose.connect('mongodb://localhost/shareboard_database');
 var Schema = mongoose.Schema;
 
 var Board = new Schema({
+    name: String,
     lists: [Lists]
 });
 
@@ -50,6 +51,7 @@ app.post('/boards', function(request, response) {
     console.log('POST: ');
     console.log(request.body);
     board = new BoardModel({
+        name: request.body.name,
         lists: request.body.lists
     });
     board.save(function(error) {
@@ -80,6 +82,7 @@ app.get('/boards/:id', function(request, response, next) {
 
 app.put('/boards/:id', function(request, response) {
     return BoardModel.findById(request.params.id, function(error, board) {
+        board.name = request.body.name;
         board.lists = request.body.lists;
         return board.save(function(error) {
             if (!error) {
