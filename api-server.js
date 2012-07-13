@@ -25,31 +25,27 @@ var Board = new Schema({
 
 var Lists = new Schema({
     name: String,
-    list_items: [List_Items]
+    items: [Items]
 });
 
-var List_Items = new Schema({
+var Items = new Schema({
     text: String
 });
 
 var BoardModel = mongoose.model('Board', Board);
 
-// Api spec
-app.get('/api', function(request, response) {
-    response.send('ShareBoard API is running');
-});
-
-app.get('/api/boards', function(request, response) {
+// API spec
+app.get('/boards', function(request, response) {
     return BoardModel.find(function(error, boards) {
         if (!error) {
             return response.send(boards);
         } else {
             return console.log(error);
         }
-    })
+    });
 });
 
-app.post('/api/boards', function(request, response) {
+app.post('/boards', function(request, response) {
     var board;
     console.log('POST: ');
     console.log(request.body);
@@ -66,12 +62,13 @@ app.post('/api/boards', function(request, response) {
     return response.send(board);
 });
 
-app.all('/api/boards/:id', function(request, response, next) {
+app.all('/boards/:id', function(request, response, next) {
     response.header("Access-Control-Allow-Origin", "*");
+    response.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     next();
 });
 
-app.get('/api/boards/:id', function(request, response, next) {
+app.get('/boards/:id', function(request, response, next) {
     return BoardModel.findById(request.params.id, function(error, board) {
         if (!error) {
             return response.send(board);
@@ -81,12 +78,13 @@ app.get('/api/boards/:id', function(request, response, next) {
     });
 });
 
-app.put('/api/boards/:id', function(request, reponse) {
+app.put('/boards/:id', function(request, response) {
     return BoardModel.findById(request.params.id, function(error, board) {
         board.lists = request.body.lists;
         return board.save(function(error) {
             if (!error) {
                 console.log('Board updated successfully');
+                return response.send('');
             } else {
                 return console.log(error);
             }
@@ -94,7 +92,7 @@ app.put('/api/boards/:id', function(request, reponse) {
     });
 });
 
-app.delete('/api/boards/:id', function(request, response) {
+app.delete('/boards/:id', function(request, response) {
     return BoardModel.findById(request.params.id, function(error, board) {
         return board.remove(function(error) {
             if (!error) {
