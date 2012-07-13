@@ -36,6 +36,12 @@ var Items = new Schema({
 var BoardModel = mongoose.model('Board', Board);
 
 // API spec
+app.all('/boards', function(request, response, next) {
+    response.header("Access-Control-Allow-Origin", "*");
+    response.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS ");
+    next();
+});
+
 app.get('/boards', function(request, response) {
     return BoardModel.find(function(error, boards) {
         if (!error) {
@@ -66,7 +72,7 @@ app.post('/boards', function(request, response) {
 
 app.all('/boards/:id', function(request, response, next) {
     response.header("Access-Control-Allow-Origin", "*");
-    response.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    response.header("Access-Control-Allow-Methods", "GET, PUT, DELETE");
     next();
 });
 
